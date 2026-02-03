@@ -74,6 +74,7 @@ Producer --> [ Broker : Topic ] --> Consumer
 
 ### 问题
 
+排队贴告示的队伍过长，怎么办？
 如果管理员一个人忙不过来，怎么办？
 
 ---
@@ -260,3 +261,69 @@ Consumer Group
 
 Kafka 是一个：
 可扩展、可容错、可并行的消息分发系统
+
+---
+
+## 总结：Kafka 核心概念速览
+
+### 概念清单
+
+- Topic：消息分类的“频道”
+- Partition：Topic 的并行分片，保持分片内有序
+- Broker：Kafka 节点，负责存储与转发
+- Leader：分区主副本，处理读写
+- Replica：分区副本，保障容错
+- Consumer Group：并行消费的“工班”
+- ZooKeeper：旧版集群协调（元数据/选主）
+- KRaft：新一代内置元数据管理（替代 ZooKeeper）
+
+### 一句话
+
+Kafka = Topic + Partition + Broker + Replica + Consumer Group 的协作系统
+
+---
+
+## 总结：常见关键参数
+
+### 主题与副本
+
+- `num.partitions`：分区数（并行度）
+- `replication.factor`：副本数（容错级别）
+- `min.insync.replicas`：最小同步副本数（写入安全）
+
+### 生产与消费
+
+- `acks`：生产者确认级别（0/1/all）
+- `max.in.flight.requests.per.connection`：在途请求数
+- `enable.idempotence`：幂等写入
+- `max.poll.records`：单次拉取条数
+
+### 存储与保留
+
+- `retention.ms`：保留时间
+- `retention.bytes`：保留大小
+- `segment.bytes`：日志段大小
+
+### 经验法则
+
+- 分区数决定吞吐上限
+- 副本数决定稳定性成本
+- `min.insync.replicas` + `acks=all` 决定数据安全底线
+
+---
+
+## 另外：集群的特点
+
+当我们谈到kafka集群的时候，我们在谈什么？
+
+- 高可用(Availability)
+  - 防止单点故障带来的系统瘫痪
+- 横向扩展(Scalability)
+  - 单机能力有物理极限，那么两个呢？十个呢？
+  - CPU，内存，IO，带宽
+- 性能(Throughput)
+  - 吞吐 <-> 并行
+- 治理能力(Manageability)
+  - 选主，心跳，同步，编排
+
+> 数量换质量，用结构换稳定，用分布换确定性。
